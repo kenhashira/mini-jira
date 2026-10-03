@@ -10,3 +10,22 @@ jobs:
           python-version: "3.12"
       - run: pip install -r requirements-dev.txt
       - run: pytest -q
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build image
+        run: docker build -t mini-jira .
+      - name: Run container
+        run: docker run -d --name mini-jira -p 8000:8000 mini-jira
+      - name: Wait for GET /projects to return 200
+        run: |
+          for i in $(seq 1 30); do
+            code=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8000/projects || true)
+            echo "attempt $i: HTTP $code"
+            if [ "$code" = "200" ]; then exit 0; fi
+            sleep 2
+          done
+          echo "Container did not return 200 from GET /projects"
+          docker logs mini-jira
+          exit 1
