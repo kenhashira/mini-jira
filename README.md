@@ -15,11 +15,19 @@ comments, filtering and pagination.
 - Pytest suite, Dockerfile, GitHub Actions CI
 
 ## Run locally
+macOS / Linux:
 ```bash
 python -m venv venv && source venv/bin/activate
 pip install -r requirements-dev.txt
 uvicorn app.main:app --reload
 ```
+
+Windows (PowerShell), no virtual environment activation needed:
+```powershell
+python -m pip install -r requirements-dev.txt
+python -m uvicorn app.main:app --reload
+```
+
 Interactive docs: http://localhost:8000/docs
 
 ## Run with Docker
